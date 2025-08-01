@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>HTML Editor</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- FontAwesome, CodeMirror, SweetAlert2 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;background:#1e1e1e;color:#ccc;font-family:sans-serif;}
+    .tab-bar{display:flex;align-items:center;padding:.5em;background:#2b2b2b;border-bottom:1px solid #444;position:relative;}
+    .tab{cursor:pointer;padding:.3em .6em;margin-right:1em;border-radius:4px;color:#ccc;display:flex;align-items:center;gap:5px;}
+    .tab.active{background:#444;color:#fff;}
+    .tab.error{color:#e06c75;}
+    .menu-btn{margin-left:auto;font-size:1.2em;cursor:pointer;padding:.3em;}
+    .menu{position:absolute;top:2.5em;right:10px;background:#333;border:1px solid #555;border-radius:6px;display:none;flex-direction:column;z-index:999;}
+    .menu.show{display:flex;}
+    .menu button{background:none;border:none;color:#fff;padding:.5em 1em;text-align:left;cursor:pointer;width:160px;}
+    .menu button:hover{background:#444;}
+    .panel{display:none;height:calc(100% - 2.5em);}
+    .panel.active{display:block;}
+    textarea{height:100%;}
+    iframe{width:100%;height:100%;border:none;background:transparent;}
+    pre{padding:1em;font-family:monospace;white-space:pre-wrap;overflow:auto;background:#111;height:100%;color:#0f0;}
+  </style>
+</head>
+<body>
+  <div class="tab-bar">
+    <div class="tab active" data-tab="code"><i class="fa fa-code"></i>Code</div>
+    <div class="tab" data-tab="preview"><i class="fa fa-eye"></i>Preview</div>
+    <div class="tab" id="consoleTab" data-tab="console"><i class="fa fa-terminal"></i>Console</div>
+    <div class="menu-btn"><i class="fa fa-ellipsis-v"></i></div>
+    <div class="menu" id="menu">
+      <button id="btn-new">New</button>
+      <button id="btn-open">Open</button>
+      <button id="btn-save">Save</button>
+      <button id="btn-saveas">Save As</button>
+      <button id="btn-download">Download</button>
+    </div>
+  </div>
+  <div class="panel active" id="code"><textarea id="codeArea"></textarea></div>
+  <div class="panel" id="preview"><iframe id="previewFrame"></iframe></div>
+  <div class="panel" id="console"><pre id="consoleOutput"></pre></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closetag.min.js"></script>
+
+  <script>
+    const defaultCode = `<style>
+
+</style>
+<body>
+
+</body>
+<script>
+
+<\/script>`
+  </script>
+
+  <script>
+    const editor = CodeMirror.fromTextArea(document.getElementById('codeArea'), {
+      mode:'htmlmixed',theme:'monokai',lineNumbers:true, autoCloseTags: true, autoCloseBrackets: true
+    });
+    editor.setSize('100%','100%');
+    editor.setValue(defaultCode)
+    const tabs = document.querySelectorAll('.tab');
+    let currentFile = null;
+    const consoleTab = document.getElementById('consoleTab');
+
+    tabs.forEach(tab=>tab.onclick=()=>{
+      tabs.forEach(t=>t.classList.toggle('active', t===tab));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id===tab.dataset.tab));
+      closeMenu();
+      if(tab.dataset.tab==='preview') runPreview();
+      else if(tab.dataset.tab==='console') document.getElementById('consoleOutput').textContent='';
+    });
+
+    document.querySelector('.menu-btn').addEventListener('click', e=>{e.stopPropagation();document.getElementById('menu').classList.toggle('show');});
+    document.addEventListener('click', e=>{if(!e.target.closest('.menu')&&!e.target.closest('.menu-btn')||e.target.closest('.CodeMirror')) closeMenu();});
+    function closeMenu(){document.getElementById('menu').classList.remove('show');}
+
+    document.getElementById('btn-new').onclick=()=>{editor.setValue('');currentFile=null;closeMenu();};
+    document.getElementById('btn-save').onclick=()=>{currentFile?save(currentFile):swalSave();closeMenu();};
+    document.getElementById('btn-saveas').onclick=()=>{swalSave();closeMenu();};
+    document.getElementById('btn-open').onclick=()=>{swalOpen();closeMenu();};
+    document.getElementById('btn-download').onclick=()=>{download();closeMenu();};
+
+    function swalSave(){
+      Swal.fire({
+        title:'Save As',
+        input:'text',
+        inputValue:currentFile||'',
+        confirmButtonText:'Save',
+        showCancelButton:true,
+        background:'#2e2e2e',
+        color:'#eee',
+        inputPlaceholder:'Filename'
+      }).then(res=>{
+        if(res.isConfirmed&&res.value.trim()){
+          save(res.value.trim());
+        }
+      });
+    }
+
+    function swalOpen(){
+      const keys=Object.keys(localStorage).filter(k=>k.startsWith('file:'));
+      let html='';
+      if(!keys.length){
+        html='<em>Nothing saved</em>';
+      } else {
+        keys.forEach(k=>{
+          const name=k.slice(5);
+          html+=`<button onclick="loadFile('${name}')" class="swal2-confirm swal2-styled" style="display:block;margin:4px 0;width:100%;">${name}</button>`;
+        });
+      }
+      Swal.fire({
+        title:'Open File',
+        html:html,
+        showConfirmButton:false,
+        background:'#2e2e2e',
+        color:'#eee'
+      });
+    }
+
+    window.loadFile=name=>{
+      const content=localStorage.getItem('file:'+name);
+      if(content!==null){editor.setValue(content);currentFile=name;}
+      Swal.close();
+    };
+
+    function save(name){localStorage.setItem('file:'+name,editor.getValue());currentFile=name;}
+
+    function runPreview(){
+      const iframe=document.getElementById('previewFrame'), code=editor.getValue();
+      iframe.src=URL.createObjectURL(new Blob([code],{type:'text/html'}));
+      const cout=document.getElementById('consoleOutput'); cout.textContent='';
+      consoleTab.classList.remove('error');
+      iframe.onload=()=>{
+        const win=iframe.contentWindow, orig=win.console.error;
+        win.console.error=(...args)=>{
+          orig.apply(win.console,args);
+          cout.textContent+=args.join(' ')+'\n';
+          consoleTab.classList.add('error');
+        };
+      };
+    }
+
+    function download(){
+      const fname=(currentFile||'untitled')+'.html';
+      const blob=new Blob([editor.getValue()],{type:'text/html'});
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=fname;
+      a.click();
+    }
+  </script>
+</body>
+</html>
