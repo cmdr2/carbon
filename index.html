@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>HTML Editor</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
   <!-- FontAwesome, CodeMirror, SweetAlert2 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
@@ -125,6 +125,43 @@
     #previewBtn {
       display: none;
     }
+
+    #charBar {
+      display: none;
+    }
+
+    @media only screen and (max-width: 767px) {
+      #charBar {
+        display: block;
+      }
+      #charBar .row {
+        margin-bottom: 6pt;
+      }
+
+      .mobile-char-bar {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: #2a2a2a;
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 3pt;
+        z-index: 999;
+      }
+
+      .mobile-char-bar button {
+        background: #444;
+        color: #fff;
+        border: none;
+        padding: 6pt 10pt;
+        margin: 0 3pt;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        flex: 0 0 auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -155,6 +192,11 @@
   </div>
 
   <div class="panel" id="console"><pre id="consoleOutput"></pre></div>
+
+  <div class="mobile-char-bar" id="charBar">
+    <div class="row"></div>
+    <div class="row"></div>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js"></script>
@@ -217,6 +259,36 @@
       tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
       document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === tabName));
     }
+
+    const charBarRows = document.querySelectorAll('#charBar .row');
+    const chars = ['=', ';', ':', '(', ')', '{', '}', '<', '>', '[', ']', '"', '+', '-', '/', '*', '\'', ';', '_', '&', '|'];
+    const pairs = {
+      '(': ')',
+      '{': '}',
+      '[': ']',
+      '"': '"',
+      '\'': '\''
+    };
+    chars.forEach((c, i) => {
+      const btn = document.createElement('button');
+      btn.textContent = c;
+      btn.onclick = () => {
+        const doc = editor.getDoc();
+        const cursor = doc.getCursor();
+        if (pairs[c]) {
+          doc.replaceRange(c + pairs[c], cursor);
+          doc.setCursor({ line: cursor.line, ch: cursor.ch + 1 });
+        } else {
+          doc.replaceRange(c, cursor);
+        }
+        editor.focus();
+      };
+
+      const entriesPerRow = Math.ceil(chars.length / charBarRows.length)
+      let rowIdx = Math.floor(i / entriesPerRow)
+      let row = charBarRows[rowIdx]
+      row.appendChild(btn);
+    });
 
     document.querySelector('.menu-btn').addEventListener('click', e => {
       e.stopPropagation();
