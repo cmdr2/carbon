@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>HTML Editor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
+  <link rel="manifest" href="manifest.json">
   <!-- FontAwesome, CodeMirror, SweetAlert2 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
@@ -388,6 +389,12 @@
       a.href = URL.createObjectURL(blob);
       a.download = fname;
       a.click();
+    }
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/carbon/sw.js');
     }
   </script>
 </body>
