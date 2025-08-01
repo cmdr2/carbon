@@ -306,6 +306,7 @@
     document.getElementById('btn-saveas').onclick = () => { swalSave(); closeMenu(); };
     document.getElementById('btn-open').onclick = () => { swalOpen(); closeMenu(); };
     document.getElementById('btn-download').onclick = () => { download(); closeMenu(); };
+    editor.on('focus', closeMenu);
 
     function swalSave() {
       Swal.fire({
