@@ -1,4 +1,4 @@
-A simple browser-based code editor, meant for my usage. Runs and saves locally on the device.
+A simple browser-based code editor, focused on programming on mobile devices. Runs and saves locally on the device.
 
 Live at [https://me.cmdr2.org/carbon](https://me.cmdr2.org/carbon)
 
