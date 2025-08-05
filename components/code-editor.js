@@ -1,10 +1,10 @@
-import {LitElement, html, css} from "https://esm.sh/lit@3"
+import {LitElement, html, css} from "lit"
 
-import {EditorView, basicSetup} from "https://esm.sh/codemirror"
-import {javascript as javascriptLang} from "https://esm.sh/@codemirror/lang-javascript"
-import {html as htmlLang} from "https://esm.sh/@codemirror/lang-html"
-import {css as cssLang} from "https://esm.sh/@codemirror/lang-css"
-import {monokai} from "https://esm.sh/@uiw/codemirror-theme-monokai"
+import {EditorView, basicSetup} from "codemirror"
+import {javascript as javascriptLang} from "@codemirror/lang-javascript"
+import {html as htmlLang} from "@codemirror/lang-html"
+import {css as cssLang} from "@codemirror/lang-css"
+import {monokai} from "@uiw/codemirror-theme-monokai"
 import {specialCharsPlugin} from "./special-chars-plugin.js?v=1"
 
 class CodeEditor extends LitElement {

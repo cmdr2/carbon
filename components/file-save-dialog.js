@@ -1,4 +1,4 @@
-import Swal from "https://esm.sh/sweetalert2@11"
+import Swal from "sweetalert2"
 
 class SaveDialog extends HTMLElement {
     constructor() {

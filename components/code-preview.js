@@ -1,4 +1,4 @@
-import {LitElement, html, css} from "https://esm.sh/lit@3"
+import {LitElement, html, css} from "lit"
 
 import './code-preview-console.js'
 
