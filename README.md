@@ -1,4 +1,4 @@
-A simple browser-based code editor, meant for my usage.
+A simple browser-based code editor, meant for my usage. Live at [https://me.cmdr2.org/carbon](https://me.cmdr2.org/carbon)
 
 I often write or run code while sitting in a bus. So this is a simple editor that's tailored to my liking.
 
