@@ -1,41 +1,34 @@
+import {LitElement, html, css} from "https://esm.sh/lit@3"
+
 import './code-preview-console.js'
 
-const HTML = `
-    <style>
-    :host {
-        background: white;
-        width: 100%;
-        height: 100%;
-    }
-    #container {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-    iframe {
-        background: transparent;
-        border: none;
-        width: 100%;
-        flex-grow: 1;
-    }
-    </style>
+class CodePreview extends LitElement {
+    static styles = css`
+        :host {
+            background: white;
+            width: 100%;
+            height: 100%;
+        }
+        #container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        iframe {
+            background: transparent;
+            border: none;
+            width: 100%;
+            flex-grow: 1;
+        }
+    `
 
-    <div id="container">
-        <iframe id="previewFrame"></iframe>
-        <preview-console></preview-console>
-    </div>
-`
-
-class CodePreview extends HTMLElement {
-    constructor() {
-        super()
-        this.attachShadow({mode: "open"})
-    }
-
-    connectedCallback() {
-        this.shadowRoot.innerHTML = HTML
-
-        this.console = this.shadowRoot.querySelector("preview-console")
+    render() {
+        return html`
+            <div id="container">
+                <iframe id="previewFrame"></iframe>
+                <preview-console collapsed></preview-console>
+            </div>
+        `
     }
 
     get src() {
@@ -44,10 +37,11 @@ class CodePreview extends HTMLElement {
     }
 
     set src(html) {
+        const console = this.shadowRoot.querySelector("preview-console")
         const iframe = this.shadowRoot.querySelector('iframe')
-        const blob = new Blob([this.console.injectConsoleListener(html)], { type: "text/html" })
+        const blob = new Blob([console.injectConsoleListener(html)], { type: "text/html" })
         iframe.src = URL.createObjectURL(blob)
-        this.console.clear()
+        console.clear.bind(console)()
     }
 }
 

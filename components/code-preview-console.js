@@ -1,79 +1,84 @@
-const HTML = `
-    <style>
-    #container {
-        background: #111;
-        color: #0f0;
-        font-family: monospace;
-        display: flex;
-        flex-direction: column;
-        resize: vertical;
-        overflow: hidden;
-        min-height: 22pt;
-        height: 0;
-        transition: height 0.2s;
+import {LitElement, html, css} from "https://esm.sh/lit@3"
+
+class PreviewConsole extends LitElement {
+    static styles = css`
+        :host {
+            background: #111;
+            color: #0f0;
+            font-family: monospace;
+        }
+        #container {
+            display: flex;
+            flex-direction: column;
+            resize: vertical;
+            overflow: hidden;
+            min-height: 22pt;
+            height: 40vh;
+            transition: height 0.2s;
+        }
+        :host([collapsed]) #container {
+            height: 0;
+            min-height: 0;
+        }
+        #header {
+            cursor: pointer;
+            background: #222;
+            padding: 4px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 3px solid #444;
+            user-select: none;
+        }
+        #header i {
+            transition: transform 0.2s ease;
+        }
+        :host[:not([collapsed])] #header i {
+            transform: rotate(180deg);
+        }
+        #output {
+            overflow: auto;
+            flex: 1;
+            padding: 10px;
+            white-space: pre-wrap;
+        }
+    `
+
+    static properties = {
+        collapsed: {type: Boolean, reflect: true}
     }
 
-    #header {
-        cursor: pointer;
-        background: #222;
-        padding: 4px 10px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-top: 3px solid #444;
-        user-select: none;
+    render() {
+        return html`
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+            <div id="header" @click=${this.toggleCollapsed}>
+                <span>Console</span><i class="fa fa-chevron-up"></i>
+            </div>
+            <div id="container">
+                <pre id="output"></pre>
+            </div>
+        `
     }
 
-    #header i {
-        transition: transform 0.2s ease;
+    firstUpdated() {
+        window.addEventListener("message", this.consoleMessageHandler.bind(this));
     }
 
-    #header.open i {
-        transform: rotate(180deg);
+    toggleCollapsed() {
+        this.collapsed = !this.collapsed
     }
 
-    #output {
-        overflow: auto;
-        flex: 1;
-        padding: 10px;
-        white-space: pre-wrap;
-    }
-    </style>
+    consoleMessageHandler(e) {
+        const output = this.shadowRoot.querySelector('#output')
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <div id="container">
-        <div id="header"><span>Console</span><i class="fa fa-chevron-up"></i></div>
-        <pre id="output"></pre>
-    </div>
-`
-
-class PreviewConsole extends HTMLElement {
-    constructor() {
-        super()
-        this.attachShadow({mode: "open"})
-
-        this.isOpen = false
-    }
-
-    connectedCallback() {
-        this.shadowRoot.innerHTML = HTML
-
-        this.container = this.shadowRoot.getElementById('container')
-        this.header = this.shadowRoot.getElementById('header')
-        this.output = this.shadowRoot.getElementById('output')
-
-        this.header.addEventListener("click", this.toggle.bind(this))
-
-        window.addEventListener("message", e => {
-            if (e.data && e.data.type === "console") {
-                if (e.data.level === "error" && !this.isOpen) {
-                    this.toggle()
-                }
-
-                this.output.textContent += `[${e.data.level}] ${e.data.args.join(' ')}\n`
-                console[e.data.level](...e.data.args)
+        if (e.data?.type === "console") {
+            if (e.data.level === "error" && this.collapsed) {
+                this.collapsed = false
             }
-        });
+
+            output.textContent += `[${e.data.level}] ${e.data.args.join(' ')}\n`
+            console[e.data.level](...e.data.args)
+        }
     }
 
     injectConsoleListener(html) {
@@ -81,14 +86,9 @@ class PreviewConsole extends HTMLElement {
         return script + html;
     }
 
-    toggle() {
-        this.isOpen = !this.isOpen
-        this.container.style.height = this.isOpen ? '40vh' : '0'
-        this.header.classList.toggle('open', this.isOpen)
-    }
-
     clear() {
-        this.output.textContent = ""
+        const output = this.shadowRoot.querySelector('#output')
+        if (output) output.textContent = ""
     }
 }
 
