@@ -1,6 +1,6 @@
 import {ViewPlugin} from "https://esm.sh/@codemirror/view"
 
-const specialCharacters = ['=', '"', '(', ')', '{', '}', '<', '>', '[', ']', ';', ':', '+', '-', '/', '*', '&', '|']
+const specialCharacters = ['=', '"', '(', '{', '[', '<', '>', ';', ':', '+', '-', '/', '*', '&', '|']
 const pairs = {
     '(': ')',
     '{': '}',
