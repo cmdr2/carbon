@@ -21,11 +21,11 @@ class SaveDialog extends HTMLElement {
                 const customEvent = new CustomEvent("submit", {detail: res.value.trim()})
                 this.dispatchEvent(customEvent)
             }
-        })
-    }
 
-    disconnectedCallback() {
-        Swal.close()
+            if (this.parentElement) {
+                this.parentElement.removeChild(this)
+            }
+        })
     }
 }
 

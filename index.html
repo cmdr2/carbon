@@ -73,35 +73,23 @@ class App extends HTMLElement {
         this.editor = this.querySelector("#code-editor")
         this.preview = this.querySelector("#code-preview")
         this.tabs = this.querySelector("#tabPanel")
-        this.openDialog = document.createElement("open-dialog")
-        this.saveDialog = document.createElement("save-dialog")
 
         // initial state
         this.editor.src = DEFAULT_CODE
         this.currentFilename = ""
         this.tabs.hideTab(1)  // hide the Preview tab until the first run
 
-        // bind callbacks
+        // bind event listeners
         const runBtn = this.querySelector("#runBtn")
         runBtn.addEventListener("click", this.action_run.bind(this))
 
         const menu = this.querySelector("#actions popup-menu")
         menu.addEventListener("menuItemClicked", e => this["action_" + e.detail]())
-
-        this.openDialog.addEventListener("submit", e => {
-            this.removeChild(this.openDialog)
-            this.openFile(e.detail)
-            this.tabs.activeTabIndex = 0
-        })
-        this.saveDialog.addEventListener("submit", e => {
-            this.removeChild(this.saveDialog)
-            this.saveFile(e.detail)
-        })
     }
 
     action_run() {
-        tabPanel.unhideTab(1)
-        tabPanel.activeTabIndex = 1
+        this.tabs.unhideTab(1)
+        this.tabs.activeTabIndex = 1
 
         this.preview.src = this.editor.src
     }
@@ -114,19 +102,28 @@ class App extends HTMLElement {
     }
 
     action_open() {
-        this.appendChild(this.openDialog)
+        const dialog = document.createElement("open-dialog")
+        dialog.addEventListener("submit", e => {
+            this.openFile(e.detail)
+            this.tabs.activeTabIndex = 0
+        }, { once: true })
+        this.appendChild(dialog)
     }
 
     action_save() {
         if (this.currentFilename) {
             this.saveFile(this.currentFilename)
         } else {
-            this.appendChild(this.saveDialog)
+            this.action_save_as()
         }
     }
 
     action_save_as() {
-        this.appendChild(this.saveDialog)
+        const dialog = document.createElement("save-dialog")
+        dialog.addEventListener("submit", e => {
+            this.saveFile(e.detail)
+        }, { once: true })
+        this.appendChild(dialog)
     }
 
     action_download() {

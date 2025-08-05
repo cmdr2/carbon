@@ -31,14 +31,15 @@ class OpenDialog extends HTMLElement {
                     btn.addEventListener("click", e => {
                         const customEvent = new CustomEvent("submit", {detail: btn.dataset.filename})
                         this.dispatchEvent(customEvent)
+                        Swal.close()
                     })
                 })
             }
+        }).then(() => {
+            if (this.parentElement) {
+                this.parentElement.removeChild(this)
+            }
         })
-    }
-
-    disconnectedCallback() {
-        Swal.close()
     }
 }
 
