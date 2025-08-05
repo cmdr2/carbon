@@ -3,7 +3,7 @@ import {javascript} from "https://esm.sh/@codemirror/lang-javascript"
 import {html} from "https://esm.sh/@codemirror/lang-html"
 import {css} from "https://esm.sh/@codemirror/lang-css"
 import {monokai} from "https://esm.sh/@uiw/codemirror-theme-monokai"
-import {specialCharsPlugin} from "./special-chars-plugin.js"
+import {specialCharsPlugin} from "./special-chars-plugin.js?v=1"
 
 const HTML = `
     <style>
