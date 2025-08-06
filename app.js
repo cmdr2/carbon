@@ -1,13 +1,13 @@
 import {LitElement, html, css} from 'lit'
 
-import 'shoelace/components/tab-group/tab-group.js';
-import 'shoelace/components/tab/tab.js';
-import 'shoelace/components/tab-panel/tab-panel.js';
-import 'shoelace/components/dropdown/dropdown.js';
-import 'shoelace/components/button/button.js';
-import 'shoelace/components/menu/menu.js';
-import 'shoelace/components/menu-item/menu-item.js';
-import 'shoelace/components/icon/icon.js';
+import 'shoelace/components/tab-group/tab-group.js'
+import 'shoelace/components/tab/tab.js'
+import 'shoelace/components/tab-panel/tab-panel.js'
+import 'shoelace/components/dropdown/dropdown.js'
+import 'shoelace/components/button/button.js'
+import 'shoelace/components/menu/menu.js'
+import 'shoelace/components/menu-item/menu-item.js'
+import 'shoelace/components/icon/icon.js'
 
 import './components/popup-menu.js'
 import './components/code-editor.js?v=1'
