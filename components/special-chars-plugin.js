@@ -14,7 +14,6 @@ export const specialCharsPlugin = ViewPlugin.define(
     (view) => {
         let charDiv = document.createElement('div')
         charDiv.className = "cm-special-chars-container"
-        charDiv.style.position = 'fixed'
         charDiv.style.bottom = '0'
         charDiv.style.left = '0'
         charDiv.style.right = '0'
@@ -57,7 +56,7 @@ export const specialCharsPlugin = ViewPlugin.define(
             row.appendChild(button)
         })
 
-        view.dom.appendChild(charDiv)
+        view.dom.parentNode.appendChild(charDiv)
 
         // Handle keyboard overlap for Android
         const handleViewportResize = () => {

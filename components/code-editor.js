@@ -17,16 +17,19 @@ class CodeEditor extends LitElement {
         #codeArea {
             width: 100%;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         #codeArea .cm-editor {
             width: 100%;
-            height: 100%;
+            flex-grow: 1;
         }
         .cm-special-chars-container {
             display: none;
-            padding: 3pt;
+            padding: 3pt 0pt;
         }
         .cm-special-chars-row {
+            display: flex;
             margin-bottom: 6pt;
         }
         .cm-special-char-btn {
@@ -60,7 +63,11 @@ class CodeEditor extends LitElement {
 
     firstUpdated() {
         this.editor = new EditorView({
-            extensions: [basicSetup, htmlLang(), cssLang(), javascriptLang(), specialCharsPlugin, monokai],
+            extensions: [
+                basicSetup,
+                htmlLang(), cssLang(), javascriptLang(),
+                specialCharsPlugin,
+                monokai],
             parent: this.shadowRoot.getElementById("codeArea"),
         })
 
