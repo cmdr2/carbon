@@ -36,11 +36,17 @@ class CodeEditor extends LitElement {
             background: #444;
             color: #fff;
             border: none;
-            padding: 6pt 10pt;
+            padding: 6pt 8pt;
+            height: 25pt;
+            width: 22pt;
             margin: 0 3pt;
             border-radius: 4px;
             font-size: 16px;
             cursor: pointer;
+            font-family: monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         @media only screen and (max-width: 767px) {
             .cm-special-chars-container {
