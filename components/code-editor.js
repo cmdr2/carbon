@@ -24,10 +24,15 @@ class CodeEditor extends LitElement {
             width: 100%;
             flex-grow: 1;
             overflow-y: auto;
+            height: 100%;
+        }
+        .cm-scroller {
+            overflow: auto;
         }
         .cm-special-chars-container {
             display: none;
             padding: 3pt 0pt;
+            padding-bottom: 8pt;
         }
         .cm-special-chars-row {
             display: flex;

@@ -30,7 +30,8 @@ export const specialCharsPlugin = ViewPlugin.define(
         charDiv.style.right = '0'
         charDiv.style.zIndex = '1000' // Ensure it's on top
         charDiv.style.width = '100%'
-        charDiv.style.overflow = 'auto'
+        charDiv.style.overflowX = 'auto'
+        charDiv.style.overflowY = 'hidden'
         charDiv.style.whiteSpace = 'nowrap'
 
         keyRows.forEach(row => {
@@ -101,22 +102,9 @@ export const specialCharsPlugin = ViewPlugin.define(
 
         view.dom.parentNode.appendChild(charDiv)
 
-        // Handle keyboard overlap for Android
-        const handleViewportResize = () => {
-            if (window.visualViewport && window.visualViewport.height < window.innerHeight) {
-                // Keyboard is likely open, adjust div's bottom position
-                charDiv.style.bottom = `${window.innerHeight - window.visualViewport.height}px`
-            } else {
-                charDiv.style.bottom = '0'
-            }
-        }
-
-        window.visualViewport.addEventListener('resize', handleViewportResize)
-
         return {
             destroy() {
                 charDiv.remove()
-                window.visualViewport.removeEventListener('resize', handleViewportResize)
             }
         }
     },
