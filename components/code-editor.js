@@ -151,12 +151,16 @@ class CodeEditor extends LitElement {
                     })
                     break
                 case 'cut':
-                    if (!selectedText) return
+                    if (!selectedText) {
+                        return
+                    }
                     navigator.clipboard.writeText(selectedText)
                     view.dispatch({ changes: { from: selection.from, to: selection.to, insert: '' } })
                     break
                 case 'copy':
-                    if (!selectedText) return
+                    if (!selectedText) {
+                        return
+                    }
                     navigator.clipboard.writeText(selectedText)
                     break
                 case 'paste':
@@ -187,60 +191,60 @@ class CodeEditor extends LitElement {
     }
 
     _onDeveloperKey(e) {
-        if (!this.editor) return;
+        if (!this.editor) return
 
         // We don't want this to bubble up and be handled by other listeners.
-        e.stopPropagation();
+        e.stopPropagation()
 
-        const { key } = e;
-        const view = this.editor;
-        const cursorPos = view.state.selection.main.head;
-        let viewCmd = null;
+        const { key } = e
+        const view = this.editor
+        const cursorPos = view.state.selection.main.head
+        let viewCmd = null
 
         switch (key) {
             case 'ArrowUp':
             case 'ArrowDown': {
-                const line = view.state.doc.lineAt(cursorPos);
-                const newLineNumber = line.number + (key === 'ArrowDown' ? 1 : -1);
+                const line = view.state.doc.lineAt(cursorPos)
+                const newLineNumber = line.number + (key === 'ArrowDown' ? 1 : -1)
                 if (newLineNumber >= 1 && newLineNumber <= view.state.doc.lines) {
-                    const newLine = view.state.doc.line(newLineNumber);
-                    const newCursorPos = Math.min(newLine.to, newLine.from + (cursorPos - line.from));
+                    const newLine = view.state.doc.line(newLineNumber)
+                    const newCursorPos = Math.min(newLine.to, newLine.from + (cursorPos - line.from))
                     viewCmd = {
                         selection: { anchor: newCursorPos },
                         scrollIntoView: true
-                    };
+                    }
                 }
-                break;
+                break
             }
             case 'ArrowLeft':
                 viewCmd = {
                     selection: { anchor: Math.max(0, cursorPos - 1) },
                     scrollIntoView: true
-                };
-                break;
+                }
+                break
             case 'ArrowRight':
                 viewCmd = {
                     selection: { anchor: Math.min(view.state.doc.length, cursorPos + 1) },
                     scrollIntoView: true
-                };
-                break;
+                }
+                break
             default: { // Character key
-                let char = key;
+                let char = key
                 if (pairs[key]) {
-                    char += pairs[key];
+                    char += pairs[key]
                 }
 
                 viewCmd = {
                     changes: { from: cursorPos, insert: char },
                     selection: { anchor: cursorPos + 1 },
                     scrollIntoView: true
-                };
+                }
             }
         }
 
         if (viewCmd) {
-            view.dispatch(viewCmd);
-            view.focus();
+            view.dispatch(viewCmd)
+            view.focus()
         }
     }
 }
