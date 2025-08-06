@@ -1,10 +1,16 @@
 import {LitElement, html, css} from "lit"
 
 import {EditorView, basicSetup} from "codemirror"
+import {history, redo, undo} from "@codemirror/commands"
 import {javascript as javascriptLang} from "@codemirror/lang-javascript"
 import {html as htmlLang} from "@codemirror/lang-html"
 import {css as cssLang} from "@codemirror/lang-css"
 import {monokai} from "@uiw/codemirror-theme-monokai"
+
+import 'shoelace/components/icon/icon.js'
+import 'shoelace/components/button/button.js'
+import 'shoelace/components/button-group/button-group.js'
+
 
 import './developer-keyboard.js'
 
@@ -24,6 +30,13 @@ class CodeEditor extends LitElement {
             width: 100%;
             height: 100%;
         }
+        #toolbar {
+            background: #252525;
+            padding: 3pt 2pt 0pt 2pt;
+        }
+        #toolbar sl-button::part(base) {
+            background: #2b2b2b;
+        }
         #editor {
             width: 100%;
             height: 100%;
@@ -39,6 +52,7 @@ class CodeEditor extends LitElement {
         }
         developer-keyboard {
             display: none;
+            padding-bottom: 10pt;
         }
         @media only screen and (max-width: 767px) {
             #editor {
@@ -52,6 +66,19 @@ class CodeEditor extends LitElement {
 
     render() {
         return html`
+            <div id="toolbar">
+                <sl-button-group>
+                    <sl-button value="clear"><sl-icon name="trash" slot="prefix"></sl-icon></sl-button>
+                    <!--sl-button value="cut"><sl-icon name="scissors" slot="prefix"></sl-icon></sl-button>
+                    <sl-button value="copy"><sl-icon name="copy" slot="prefix"></sl-icon></sl-button-->
+                    <sl-button value="paste"><sl-icon name="clipboard-check-fill" slot="prefix"></sl-icon></sl-button>
+                    <!--sl-button value="selectAll"><sl-icon name="arrows-expand-vertical" slot="prefix"></sl-icon></sl-button-->
+                </sl-button-group>
+                <sl-button-group label="Timeline">
+                    <sl-button value="undo"><sl-icon name="arrow-counterclockwise" slot="prefix"></sl-icon></sl-button>
+                    <sl-button value="redo"><sl-icon name="arrow-clockwise" slot="prefix"></sl-icon></sl-button>
+                </sl-button-group>
+            </div>
             <div id="editor"></div>
             <developer-keyboard @keyup=${this._onDeveloperKey}></developer-keyboard>
         `
@@ -67,6 +94,7 @@ class CodeEditor extends LitElement {
         this.editor = new EditorView({
             extensions: [
                 basicSetup,
+                history(),
                 htmlLang(), cssLang(), javascriptLang(),
                 monokai],
             parent: this.shadowRoot.getElementById("editor"),
@@ -77,6 +105,10 @@ class CodeEditor extends LitElement {
             this.src = this._pendingSrc
             delete this._pendingSrc
         }
+
+        this.shadowRoot.querySelectorAll('#toolbar sl-button').forEach(btn => {
+            btn.addEventListener('click', () => this._onToolbarClick(btn.value))
+        })
     }
 
     get src() {
@@ -101,6 +133,57 @@ class CodeEditor extends LitElement {
                 insert: s
             }
         })
+    }
+
+    _onToolbarClick(action) {
+        if (!this.editor) return
+
+        const view = this.editor
+        const state = view.state
+        const selection = state.selection.main
+        const selectedText = state.sliceDoc(selection.from, selection.to)
+
+        try {
+            switch (action) {
+                case 'clear':
+                    view.dispatch({
+                        changes: { from: 0, to: state.doc.length, insert: '' }
+                    })
+                    break
+                case 'cut':
+                    if (!selectedText) return
+                    navigator.clipboard.writeText(selectedText)
+                    view.dispatch({ changes: { from: selection.from, to: selection.to, insert: '' } })
+                    break
+                case 'copy':
+                    if (!selectedText) return
+                    navigator.clipboard.writeText(selectedText)
+                    break
+                case 'paste':
+                    navigator.clipboard.readText().then(text => {
+                        view.dispatch({
+                            changes: { from: selection.from, to: selection.to, insert: text }
+                        })
+                    })
+                    break
+                case 'selectAll':
+                    view.dispatch({
+                        selection: { anchor: 0, head: state.doc.length },
+                        scrollIntoView: true
+                    })
+                    break
+                case 'undo':
+                    undo(view)
+                    break
+                case 'redo':
+                    redo(view)
+                    break
+            }
+        } catch (e) {
+            alert(e)
+        }
+
+        view.focus()
     }
 
     _onDeveloperKey(e) {
