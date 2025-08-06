@@ -9,7 +9,6 @@ import 'shoelace/components/menu/menu.js'
 import 'shoelace/components/menu-item/menu-item.js'
 import 'shoelace/components/icon/icon.js'
 
-import './components/popup-menu.js'
 import './components/code-editor.js?v=1'
 import './components/code-preview.js'
 import './components/file-open-dialog.js?v=1'
@@ -132,12 +131,26 @@ class App extends LitElement {
         this.currentFilename = ""
         this.previewTab.style.display = "none";  // hide the Preview tab until the first run
 
+        this.openDialog = document.createElement("open-dialog")
+        this.saveDialog = document.createElement("save-dialog")
+        this.shadowRoot.appendChild(this.openDialog)
+        this.shadowRoot.appendChild(this.saveDialog)
+
         // bind event listeners
         const runBtn = this.shadowRoot.querySelector("#runBtn")
         runBtn.addEventListener("click", this.action_run.bind(this))
 
         const menu = this.shadowRoot.querySelector("#menu")
         menu.addEventListener("sl-select", e => this["action_" + e.detail.item.value]())
+
+        this.openDialog.addEventListener("submit", e => {
+            this.openFile(e.detail)
+            this.tabGroup.show('code')
+        })
+
+        this.saveDialog.addEventListener("submit", e => {
+            this.saveFile(e.detail)
+        })
     }
 
     action_run() {
@@ -153,12 +166,7 @@ class App extends LitElement {
     }
 
     action_open() {
-        const dialog = document.createElement("open-dialog")
-        dialog.addEventListener("submit", e => {
-            this.openFile(e.detail)
-            this.tabGroup.show('code')
-        }, { once: true })
-        this.appendChild(dialog)
+        this.openDialog.show()
     }
 
     action_save() {
@@ -170,11 +178,7 @@ class App extends LitElement {
     }
 
     action_save_as() {
-        const dialog = document.createElement("save-dialog")
-        dialog.addEventListener("submit", e => {
-            this.saveFile(e.detail)
-        }, { once: true })
-        this.appendChild(dialog)
+        this.saveDialog.show()
     }
 
     action_download() {

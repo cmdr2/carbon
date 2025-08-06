@@ -1,31 +1,33 @@
-import Swal from "sweetalert2"
+import {LitElement, html} from 'lit'
 
-class SaveDialog extends HTMLElement {
-    constructor() {
-        super()
-        this.attachShadow({mode: "open"})
+import 'shoelace/components/button/button.js'
+import 'shoelace/components/dialog/dialog.js'
+import 'shoelace/components/input/input.js'
+
+class SaveDialog extends LitElement {
+    render() {
+        return html`
+            <sl-dialog label="Save As" class="dialog-overview">
+                <sl-input placeholder="File name"></sl-input>
+                <sl-button slot="footer" variant="primary" @click=${this._saveClicked}>Save</sl-button>
+                <sl-button slot="footer" @click=${() => this.hide()}>Cancel</sl-button
+            </sl-dialog>
+        `
     }
 
-    connectedCallback() {
-        Swal.fire({
-            title: 'Save As',
-            input: 'text',
-            inputValue: '',
-            confirmButtonText: 'Save',
-            showCancelButton: true,
-            background: '#2e2e2e',
-            color: '#eee',
-            inputPlaceholder: 'untitled'
-        }).then(res => {
-            if (res.isConfirmed && res.value.trim()) {
-                const customEvent = new CustomEvent("submit", {detail: res.value.trim()})
-                this.dispatchEvent(customEvent)
-            }
+    _saveClicked() {
+        const filename = this.shadowRoot.querySelector('sl-input').value
+        const customEvent = new CustomEvent("submit", {detail: filename})
+        this.dispatchEvent(customEvent)
+        this.hide()
+    }
 
-            if (this.parentElement) {
-                this.parentElement.removeChild(this)
-            }
-        })
+    show() {
+        this.shadowRoot.querySelector('sl-dialog').show()
+    }
+
+    hide() {
+        this.shadowRoot.querySelector('sl-dialog').hide()
     }
 }
 

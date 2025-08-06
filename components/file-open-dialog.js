@@ -1,45 +1,45 @@
-import Swal from "sweetalert2"
+import {LitElement, html, css} from 'lit'
 
-class OpenDialog extends HTMLElement {
-    constructor() {
-        super()
-        this.attachShadow({mode: "open"})
+import 'shoelace/components/button/button.js'
+import 'shoelace/components/dialog/dialog.js'
+
+class OpenDialog extends LitElement {
+    static properties = {
+        filenames: {type: Array, state: true}
     }
 
-    connectedCallback() {
-        const keys = Object.keys(localStorage).filter(k => k.startsWith('file:'))
-        let html = ''
+    render() {
+        return html`
+            <sl-dialog label="Open" class="dialog-overview">
+                <div>
+                    ${this.filenames.length === 0
+                        ? html`<em>Nothing saved</em>`
+                        :this.filenames.map(filename => html`
+                        <sl-button @click=${() => this._fileSelected(filename)}>${filename}</sl-button>
+                    `)}
+                </div>
+            </sl-dialog>
+        `
+    }
 
-        if (!keys.length) {
-            html = '<em>Nothing saved</em>'
-        } else {
-            keys.forEach(k => {
-                const name = k.slice(5)
-                html += `<button data-filename="${name}" class="swal2-confirm swal2-styled">${name}</button>`
-            })
-        }
+    constructor() {
+        super()
+        this.filenames = []
+    }
 
-        Swal.fire({
-            title: 'Open File',
-            html: html,
-            showConfirmButton: false,
-            background: '#2e2e2e',
-            color: '#eee',
-            didOpen: popup => {
-                const btns = popup.querySelectorAll("button[data-filename]")
-                btns.forEach(btn => {
-                    btn.addEventListener("click", e => {
-                        const customEvent = new CustomEvent("submit", {detail: btn.dataset.filename})
-                        this.dispatchEvent(customEvent)
-                        Swal.close()
-                    })
-                })
-            }
-        }).then(() => {
-            if (this.parentElement) {
-                this.parentElement.removeChild(this)
-            }
-        })
+    _fileSelected(filename) {
+        const customEvent = new CustomEvent("submit", {detail: filename})
+        this.dispatchEvent(customEvent)
+        this.hide()
+    }
+
+    show() {
+        this.filenames = Object.keys(localStorage).filter(k => k.startsWith('file:')).map(k => k.slice(5))
+        this.shadowRoot.querySelector('sl-dialog').show()
+    }
+
+    hide() {
+        this.shadowRoot.querySelector('sl-dialog').hide()
     }
 }
 
