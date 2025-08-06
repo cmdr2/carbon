@@ -31,6 +31,7 @@ class CodeEditor extends LitElement {
         .cm-special-chars-row {
             display: flex;
             margin-bottom: 6pt;
+            padding-left: 2pt;
         }
         .cm-special-char-btn {
             background: #444;
