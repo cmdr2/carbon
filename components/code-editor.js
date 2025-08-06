@@ -5,58 +5,46 @@ import {javascript as javascriptLang} from "@codemirror/lang-javascript"
 import {html as htmlLang} from "@codemirror/lang-html"
 import {css as cssLang} from "@codemirror/lang-css"
 import {monokai} from "@uiw/codemirror-theme-monokai"
-import {specialCharsPlugin} from "./special-chars-plugin.js?v=3"
+
+import './developer-keyboard.js'
+
+const pairs = {
+    '(': ')',
+    '{': '}',
+    '[': ']',
+    '"': '"',
+    '\'': '\''
+};
 
 class CodeEditor extends LitElement {
     static styles = css`
         :host {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-        #codeArea {
-            width: 100%;
-            height: 100%;
             display: flex;
             flex-direction: column;
-        }
-        #codeArea .cm-editor {
             width: 100%;
-            flex-grow: 1;
-            overflow-y: auto;
             height: 100%;
+        }
+        #editor {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+        #editor .cm-editor {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
         }
         .cm-scroller {
             overflow: auto;
         }
-        .cm-special-chars-container {
+        developer-keyboard {
             display: none;
-            padding: 3pt 0pt;
-            padding-bottom: 8pt;
-        }
-        .cm-special-chars-row {
-            display: flex;
-            margin-bottom: 6pt;
-            padding-left: 2pt;
-        }
-        .cm-special-char-btn {
-            background: #444;
-            color: #fff;
-            border: none;
-            padding: 6pt 8pt;
-            height: 25pt;
-            width: 22pt;
-            margin: 0 3pt;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            font-family: monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         @media only screen and (max-width: 767px) {
-            .cm-special-chars-container {
+            #editor {
+                height: 90%;
+            }
+            developer-keyboard {
                 display: block;
             }
         }
@@ -64,7 +52,8 @@ class CodeEditor extends LitElement {
 
     render() {
         return html`
-            <div id="codeArea"></div>
+            <div id="editor"></div>
+            <developer-keyboard @keyup=${this._onDeveloperKey}></developer-keyboard>
         `
     }
 
@@ -79,9 +68,8 @@ class CodeEditor extends LitElement {
             extensions: [
                 basicSetup,
                 htmlLang(), cssLang(), javascriptLang(),
-                specialCharsPlugin,
                 monokai],
-            parent: this.shadowRoot.getElementById("codeArea"),
+            parent: this.shadowRoot.getElementById("editor"),
         })
 
         // If src was set before we were ready, apply it now.
@@ -113,6 +101,64 @@ class CodeEditor extends LitElement {
                 insert: s
             }
         })
+    }
+
+    _onDeveloperKey(e) {
+        if (!this.editor) return;
+
+        // We don't want this to bubble up and be handled by other listeners.
+        e.stopPropagation();
+
+        const { key } = e;
+        const view = this.editor;
+        const cursorPos = view.state.selection.main.head;
+        let viewCmd = null;
+
+        switch (key) {
+            case 'ArrowUp':
+            case 'ArrowDown': {
+                const line = view.state.doc.lineAt(cursorPos);
+                const newLineNumber = line.number + (key === 'ArrowDown' ? 1 : -1);
+                if (newLineNumber >= 1 && newLineNumber <= view.state.doc.lines) {
+                    const newLine = view.state.doc.line(newLineNumber);
+                    const newCursorPos = Math.min(newLine.to, newLine.from + (cursorPos - line.from));
+                    viewCmd = {
+                        selection: { anchor: newCursorPos },
+                        scrollIntoView: true
+                    };
+                }
+                break;
+            }
+            case 'ArrowLeft':
+                viewCmd = {
+                    selection: { anchor: Math.max(0, cursorPos - 1) },
+                    scrollIntoView: true
+                };
+                break;
+            case 'ArrowRight':
+                viewCmd = {
+                    selection: { anchor: Math.min(view.state.doc.length, cursorPos + 1) },
+                    scrollIntoView: true
+                };
+                break;
+            default: { // Character key
+                let char = key;
+                if (pairs[key]) {
+                    char += pairs[key];
+                }
+
+                viewCmd = {
+                    changes: { from: cursorPos, insert: char },
+                    selection: { anchor: cursorPos + 1 },
+                    scrollIntoView: true
+                };
+            }
+        }
+
+        if (viewCmd) {
+            view.dispatch(viewCmd);
+            view.focus();
+        }
     }
 }
 
