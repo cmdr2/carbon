@@ -5,7 +5,7 @@ import {javascript as javascriptLang} from "@codemirror/lang-javascript"
 import {html as htmlLang} from "@codemirror/lang-html"
 import {css as cssLang} from "@codemirror/lang-css"
 import {monokai} from "@uiw/codemirror-theme-monokai"
-import {specialCharsPlugin} from "./special-chars-plugin.js?v=1"
+import {specialCharsPlugin} from "./special-chars-plugin.js?v=2"
 
 class CodeEditor extends LitElement {
     static styles = css`
