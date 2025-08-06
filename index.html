@@ -12,6 +12,9 @@ html, body {
     padding: 0;
     height: 100vh;
 }
+carbon-app {
+    height: 100%;
+}
 </style>
 <script type="importmap">
 {
@@ -20,9 +23,15 @@ html, body {
         "codemirror": "https://esm.sh/codemirror@6.0",
         "@codemirror/": "https://esm.sh/@codemirror/",
         "@uiw/codemirror-theme-monokai": "https://esm.sh/@uiw/codemirror-theme-monokai@4",
-        "sweetalert2": "https://esm.sh/sweetalert2@11"
+        "sweetalert2": "https://esm.sh/sweetalert2@11",
+        "shoelace/": "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.5.2/cdn/"
     }
 }
+</script>
+<script type="module">
+import { setBasePath } from 'shoelace/utilities/base-path.js';
+
+setBasePath('https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.5.2/cdn/');
 </script>
 <script type="module" src="app.js"></script>
 </head>

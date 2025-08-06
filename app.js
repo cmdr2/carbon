@@ -1,6 +1,10 @@
 import {LitElement, html, css} from 'lit'
 
-import './components/tabs.js'
+import 'shoelace/components/tab-group/tab-group.js';
+import 'shoelace/components/tab/tab.js';
+import 'shoelace/components/tab-panel/tab-panel.js';
+import 'shoelace/components/icon/icon.js';
+
 import './components/popup-menu.js'
 import './components/code-editor.js?v=1'
 import './components/code-preview.js'
@@ -12,12 +16,43 @@ const DEFAULT_CODE = `<style>\n  \n</style>\n<body>\n  \n</body>\n<script>\n  \n
 class App extends LitElement {
     static styles = css`
         :host {
+            display: block;
             background: #1e1e1e;
             color: #ccc;
             font-family: sans-serif;
-        }
-        #tabPanel {
             background: #2b2b2b;
+        }
+        sl-tab-group {
+            background: #2b2b2b;
+            height: 100%;
+            --track-width: 0;
+        }
+        sl-tab-group::part(base),
+        sl-tab-group::part(body),
+        sl-tab-panel::part(base),
+        sl-tab-panel::part(body),
+        sl-tab-panel {
+            height: 100%;
+        }
+        sl-tab-panel {
+            --padding: 0;
+        }
+        sl-tab::part(base) {
+            border-bottom: 0pt;
+            margin-right: 3pt;
+            padding: 6pt 12pt;
+            color: #ccc;
+            font-size: 12pt;
+            border-radius: 3pt 3pt 0pt 0pt;
+            cursor: pointer;
+            font-weight: 400;
+        }
+        sl-tab[active]::part(base) {
+            background: #444;
+            color: white;
+        }
+        sl-tab sl-icon {
+            padding-right: 4pt;
         }
         #actions {
             position: absolute;
@@ -39,13 +74,24 @@ class App extends LitElement {
     render() {
         return html`
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css">
 
-            <tab-panel id="tabPanel">
-                <span slot="tab"><i class="fa fa-code"></i> Code</span>
-                <code-editor id="code-editor" slot="content"></code-editor>
-                <span id="previewTabBtn" slot="tab"><i class="fa fa-eye"></i> Preview</span>
-                <code-preview id="code-preview" slot="content">Preview content</code-preview>
-            </tab-panel>
+            <sl-tab-group>
+                <sl-tab slot="nav" panel="code">
+                    <sl-icon name="code-slash"></sl-icon> Code
+                </sl-tab>
+                <sl-tab slot="nav" panel="preview" id="preview-tab">
+                    <sl-icon name="eye-fill"></sl-icon> Preview
+                </sl-tab>
+
+                <sl-tab-panel name="code">
+                    <code-editor id="code-editor"></code-editor>
+                </sl-tab-panel>
+                <sl-tab-panel name="preview">
+                    <code-preview id="code-preview"></code-preview>
+                </sl-tab-panel>
+            </sl-tab-group>
+
             <div id="actions">
                 <button id="runBtn"><i class="fa fa-play"></i> Run</button>
                 <popup-menu>
@@ -64,12 +110,13 @@ class App extends LitElement {
     firstUpdated() {
         this.editor = this.shadowRoot.querySelector("#code-editor")
         this.preview = this.shadowRoot.querySelector("#code-preview")
-        this.tabs = this.shadowRoot.querySelector("#tabPanel")
+        this.tabGroup = this.shadowRoot.querySelector("sl-tab-group")
+        this.previewTab = this.shadowRoot.querySelector("#preview-tab")
 
         // initial state
         this.editor.src = DEFAULT_CODE
         this.currentFilename = ""
-        this.tabs.hideTab(1)  // hide the Preview tab until the first run
+        this.previewTab.style.display = "none";  // hide the Preview tab until the first run
 
         // bind event listeners
         const runBtn = this.shadowRoot.querySelector("#runBtn")
@@ -80,24 +127,22 @@ class App extends LitElement {
     }
 
     action_run() {
-        this.tabs.unhideTab(1)
-        this.tabs.activeTabIndex = 1
-
+        this.previewTab.style.display = "block"
+        this.tabGroup.show('preview')
         this.preview.src = this.editor.src
     }
 
     action_new() {
         this.editor.src = DEFAULT_CODE
         this.currentFilename = ""
-
-        this.tabs.activeTabIndex = 0
+        this.tabGroup.show('code')
     }
 
     action_open() {
         const dialog = document.createElement("open-dialog")
         dialog.addEventListener("submit", e => {
             this.openFile(e.detail)
-            this.tabs.activeTabIndex = 0
+            this.tabGroup.show('code')
         }, { once: true })
         this.appendChild(dialog)
     }

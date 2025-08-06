@@ -5,6 +5,7 @@ import './code-preview-console.js'
 class CodePreview extends LitElement {
     static styles = css`
         :host {
+            display: block;
             background: white;
             width: 100%;
             height: 100%;
@@ -12,6 +13,7 @@ class CodePreview extends LitElement {
         #container {
             height: 100%;
             display: flex;
+            background: white;
             flex-direction: column;
         }
         iframe {

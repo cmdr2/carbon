@@ -10,6 +10,7 @@ import {specialCharsPlugin} from "./special-chars-plugin.js?v=1"
 class CodeEditor extends LitElement {
     static styles = css`
         :host {
+            display: block;
             width: 100%;
             height: 100%;
         }
