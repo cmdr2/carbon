@@ -1,17 +1,19 @@
 import {LitElement, html, css} from "lit"
 
+const INDENT = "indent"
 const ARROW_UP = "arrow-up"
 const ARROW_DOWN = "arrow-down"
 const ARROW_LEFT = "arrow-left"
 const ARROW_RIGHT = "arrow-right"
 
 const keyRows = [
-    ['=', '"', '(', '{', '[', '<', '>', ';', ARROW_UP],
-    [':', '+', '-', '/', '*', '&', '|', ARROW_LEFT, ARROW_DOWN, ARROW_RIGHT]
+    [INDENT, ':', '(', '{', '[', '<', '>', '&',        ARROW_UP,   '|'],
+    ['=',    ';', '"', '+', '-', '/', '*', ARROW_LEFT, ARROW_DOWN, ARROW_RIGHT]
 ]
+const actionKeys = [INDENT, ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT]
 
-function isArrowKey(c) {
-    return c === ARROW_UP || c === ARROW_DOWN || c === ARROW_LEFT || c === ARROW_RIGHT
+function isActionKey(c) {
+    return actionKeys.includes(c)
 }
 
 class DeveloperKeyboard extends LitElement {
@@ -49,7 +51,7 @@ class DeveloperKeyboard extends LitElement {
             justify-content: center;
             align-items: center;
         }
-        .arrow-key {
+        .action-key {
             padding: 4pt;
             background: #222;
             border: 1px solid #444;
@@ -67,9 +69,9 @@ class DeveloperKeyboard extends LitElement {
     }
 
     renderButton(char) {
-        if (isArrowKey(char)) {
+        if (isActionKey(char)) {
             return html`
-                <button class="arrow-key" @click=${() => this._onCharKey(char)}>
+                <button class="action-key" @click=${() => this._onCharKey(char)}>
                     <sl-icon name="${char}"></sl-icon>
                 </button>
             `
@@ -85,6 +87,9 @@ class DeveloperKeyboard extends LitElement {
     _onCharKey(char) {
         let key;
         switch (char) {
+            case INDENT:
+                key = 'Tab';
+                break;
             case ARROW_UP:
                 key = 'ArrowUp';
                 break;

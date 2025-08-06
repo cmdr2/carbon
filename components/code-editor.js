@@ -1,7 +1,7 @@
 import {LitElement, html, css} from "lit"
 
 import {EditorView, basicSetup} from "codemirror"
-import {history, redo, undo} from "@codemirror/commands"
+import {history, redo, undo, indentMore} from "@codemirror/commands"
 import {javascript as javascriptLang} from "@codemirror/lang-javascript"
 import {html as htmlLang} from "@codemirror/lang-html"
 import {css as cssLang} from "@codemirror/lang-css"
@@ -205,6 +205,10 @@ class CodeEditor extends LitElement {
         let viewCmd = null
 
         switch (key) {
+            case 'Tab': {
+                indentMore(view)
+                break
+            }
             case 'ArrowUp':
             case 'ArrowDown': {
                 const line = view.state.doc.lineAt(cursorPos)
@@ -247,8 +251,8 @@ class CodeEditor extends LitElement {
 
         if (viewCmd) {
             view.dispatch(viewCmd)
-            view.focus()
         }
+        view.focus()
     }
 }
 
