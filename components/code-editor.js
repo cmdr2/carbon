@@ -34,6 +34,9 @@ class CodeEditor extends LitElement {
             background: #252525;
             padding: 3pt 2pt 0pt 2pt;
         }
+        #toolbar sl-button-group {
+            --sl-input-height-medium: 20pt;
+        }
         #toolbar sl-button::part(base) {
             background: #2b2b2b;
         }
