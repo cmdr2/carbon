@@ -10,6 +10,6 @@ A bonus feature is a floating keyboard with programming-related characters, that
 It does not require installation (works in the browser), but it can be installed as a PWA using the mobile browser's `Add to Home Screen` option.
 
 ## Screenshots
+<img height="250" alt="image" src="https://github.com/user-attachments/assets/a863523c-73b8-4cc4-9ef3-a7193ff7907c" />
+<img height="250" alt="image" src="https://github.com/user-attachments/assets/67301444-f004-47bf-8264-df3594ff1c35" />
 
-<img height="250" alt="image" src="https://github.com/user-attachments/assets/299a16e6-5d95-4027-be32-dd25f48ad807" />
-<img height="250" alt="image" src="https://github.com/user-attachments/assets/9b4ea67c-cebd-48bf-a7cf-e6c561ba862b" />
