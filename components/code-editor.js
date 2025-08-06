@@ -1,7 +1,7 @@
 import {LitElement, html, css} from "lit"
 
 import {EditorView, basicSetup} from "codemirror"
-import {history, redo, undo, indentMore} from "@codemirror/commands"
+import {history, redo, undo, indentMore, cursorCharLeft, cursorCharRight, cursorLineUp, cursorLineDown} from "@codemirror/commands"
 import {javascript as javascriptLang} from "@codemirror/lang-javascript"
 import {html as htmlLang} from "@codemirror/lang-html"
 import {css as cssLang} from "@codemirror/lang-css"
@@ -209,31 +209,19 @@ class CodeEditor extends LitElement {
                 indentMore(view)
                 break
             }
-            case 'ArrowUp':
+            case 'ArrowUp': {
+                cursorLineUp(view)
+                break
+            }
             case 'ArrowDown': {
-                const line = view.state.doc.lineAt(cursorPos)
-                const newLineNumber = line.number + (key === 'ArrowDown' ? 1 : -1)
-                if (newLineNumber >= 1 && newLineNumber <= view.state.doc.lines) {
-                    const newLine = view.state.doc.line(newLineNumber)
-                    const newCursorPos = Math.min(newLine.to, newLine.from + (cursorPos - line.from))
-                    viewCmd = {
-                        selection: { anchor: newCursorPos },
-                        scrollIntoView: true
-                    }
-                }
+                cursorLineDown(view)
                 break
             }
             case 'ArrowLeft':
-                viewCmd = {
-                    selection: { anchor: Math.max(0, cursorPos - 1) },
-                    scrollIntoView: true
-                }
+                cursorCharLeft(view)
                 break
             case 'ArrowRight':
-                viewCmd = {
-                    selection: { anchor: Math.min(view.state.doc.length, cursorPos + 1) },
-                    scrollIntoView: true
-                }
+                cursorCharRight(view)
                 break
             default: { // Character key
                 let char = key
