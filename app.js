@@ -3,6 +3,10 @@ import {LitElement, html, css} from 'lit'
 import 'shoelace/components/tab-group/tab-group.js';
 import 'shoelace/components/tab/tab.js';
 import 'shoelace/components/tab-panel/tab-panel.js';
+import 'shoelace/components/dropdown/dropdown.js';
+import 'shoelace/components/button/button.js';
+import 'shoelace/components/menu/menu.js';
+import 'shoelace/components/menu-item/menu-item.js';
 import 'shoelace/components/icon/icon.js';
 
 import './components/popup-menu.js'
@@ -57,25 +61,34 @@ class App extends LitElement {
         }
         #actions {
             position: absolute;
-            top: 2pt;
+            top: 0pt;
             right: 0px;
             z-index: 1;
             padding: 2pt;
             display: flex;
         }
+        #menu sl-button::part(base) {
+            background: transparent;
+            border: 0;
+            font-size: 16pt;
+        }
+        #menu sl-menu {
+            background: #2b2b2b;
+        }
         #runBtn {
             background: #ddd;
+            color: black;
             border: 0px;
             border-radius: 2pt;
             padding: 0pt 6pt;
-            margin-right: 10pt;
+            margin-right: 8pt;
         }
     `
 
     render() {
         return html`
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/dark.css">
 
             <sl-tab-group>
                 <sl-tab slot="nav" panel="code">
@@ -95,15 +108,16 @@ class App extends LitElement {
 
             <div id="actions">
                 <button id="runBtn"><i class="fa fa-play"></i> Run</button>
-                <popup-menu>
-                    <button slot="button"><i class="fa fa-ellipsis-v"></i></button>
-
-                    <div slot="item" data-id="new"><i class="fas fa-file fa-fw"></i> New</div>
-                    <div slot="item" data-id="open"><i class="fas fa-folder-open fa-fw"></i> Open</div>
-                    <div slot="item" data-id="save"><i class="fas fa-save fa-fw"></i> Save</div>
-                    <div slot="item" data-id="save_as"><i class="fas fa-save fa-fw"></i> Save As</div>
-                    <div slot="item" data-id="download"><i class="fas fa-download fa-fw"></i> Download</div>
-                </popup-menu>
+                <sl-dropdown id="menu">
+                    <sl-button slot="trigger"><sl-icon name="three-dots-vertical"></sl-icon></sl-button>
+                    <sl-menu>
+                        <sl-menu-item value="new">New <sl-icon slot="prefix" name="file-earmark-plus"></sl-icon></sl-menu-item>
+                        <sl-menu-item value="open">Open <sl-icon slot="prefix" name="file-earmark-fill"></sl-icon></sl-menu-item>
+                        <sl-menu-item value="save">Save <sl-icon slot="prefix" name="floppy-fill"></sl-icon></sl-menu-item>
+                        <sl-menu-item value="save_as">Save As <sl-icon slot="prefix" name="floppy-fill"></sl-icon></sl-menu-item>
+                        <sl-menu-item value="download">Download <sl-icon slot="prefix" name="download"></sl-icon></sl-menu-item>
+                    </sl-menu>
+                </sl-dropdown>
             </div>
         `
     }
@@ -123,8 +137,8 @@ class App extends LitElement {
         const runBtn = this.shadowRoot.querySelector("#runBtn")
         runBtn.addEventListener("click", this.action_run.bind(this))
 
-        const menu = this.shadowRoot.querySelector("#actions popup-menu")
-        menu.addEventListener("menuItemClicked", e => this["action_" + e.detail]())
+        const menu = this.shadowRoot.querySelector("#menu")
+        menu.addEventListener("sl-select", e => this["action_" + e.detail.item.value]())
     }
 
     action_run() {
