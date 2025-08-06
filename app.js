@@ -64,7 +64,6 @@ class App extends LitElement {
             top: 0pt;
             right: 0px;
             z-index: 1;
-            padding: 2pt;
             display: flex;
         }
         #menu sl-button::part(base) {
