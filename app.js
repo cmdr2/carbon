@@ -26,6 +26,7 @@ class App extends LitElement {
             background: #2b2b2b;
             height: 100%;
             --track-width: 0;
+            padding-top: 2pt;
         }
         sl-tab-group::part(base),
         sl-tab-group::part(body),
