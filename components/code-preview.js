@@ -1,6 +1,6 @@
 import {LitElement, html, css} from "lit"
 
-import './code-preview-console.js'
+import './code-preview-console.js?v=1'
 
 class CodePreview extends LitElement {
     static styles = css`
