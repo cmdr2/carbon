@@ -23,6 +23,7 @@ class CodeEditor extends LitElement {
         #codeArea .cm-editor {
             width: 100%;
             flex-grow: 1;
+            overflow-y: auto;
         }
         .cm-special-chars-container {
             display: none;
