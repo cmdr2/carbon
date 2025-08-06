@@ -73,19 +73,17 @@ class App extends LitElement {
         #menu sl-menu {
             background: #2b2b2b;
         }
-        #runBtn {
+        #runBtn::part(base) {
             background: #ddd;
             color: black;
-            border: 0px;
-            border-radius: 2pt;
-            padding: 0pt 6pt;
-            margin-right: 8pt;
+        }
+        #runBtn sl-icon {
+            font-size: 15pt;
         }
     `
 
     render() {
         return html`
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/dark.css">
 
             <sl-tab-group>
@@ -105,7 +103,10 @@ class App extends LitElement {
             </sl-tab-group>
 
             <div id="actions">
-                <button id="runBtn"><i class="fa fa-play"></i> Run</button>
+                <sl-button id="runBtn">
+                    <sl-icon name="play-fill" slot="prefix"></sl-icon>
+                    Run
+                </sl-button>
                 <sl-dropdown id="menu">
                     <sl-button slot="trigger"><sl-icon name="three-dots-vertical"></sl-icon></sl-button>
                     <sl-menu>

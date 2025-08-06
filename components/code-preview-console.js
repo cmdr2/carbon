@@ -1,5 +1,7 @@
 import {LitElement, html, css} from "lit"
 
+import 'shoelace/components/icon/icon.js'
+
 class PreviewConsole extends LitElement {
     static styles = css`
         :host {
@@ -30,12 +32,6 @@ class PreviewConsole extends LitElement {
             border-top: 3px solid #444;
             user-select: none;
         }
-        #header i {
-            transition: transform 0.2s ease;
-        }
-        :host[:not([collapsed])] #header i {
-            transform: rotate(180deg);
-        }
         #output {
             overflow: auto;
             flex: 1;
@@ -50,9 +46,9 @@ class PreviewConsole extends LitElement {
 
     render() {
         return html`
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
             <div id="header" @click=${this.toggleCollapsed}>
-                <span>Console</span><i class="fa fa-chevron-up"></i>
+                <span>Console</span>
+                <sl-icon name="${this.collapsed ? "chevron-up" : "chevron-down"}">
             </div>
             <div id="container">
                 <pre id="output"></pre>
