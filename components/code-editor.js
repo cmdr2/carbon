@@ -178,7 +178,14 @@ class CodeEditor extends LitElement {
                 if (shiftKey) {
                     indentLess(view)
                 } else {
-                    indentMore(view)
+                    if (view.state.selection.main.empty) {
+                        viewCmd = {
+                            changes: { from: cursorPos, insert: '    ' },
+                            selection: { anchor: cursorPos + 4 }
+                        }
+                    } else {
+                        indentMore(view)
+                    }
                 }
                 break
             }
