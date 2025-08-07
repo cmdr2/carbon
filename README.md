@@ -5,7 +5,7 @@ Live at [https://me.cmdr2.org/carbon](https://me.cmdr2.org/carbon)
 ## Background
 I often write or run code while traveling in a bus. So this is a simple editor that's tailored to my liking. It currently works only for single file HTML/CSS/JS, meant for quick prototyping.
 
-A bonus feature is a floating keyboard with programming-related characters, that avoids the need to keep switching pages on the mobile keyboard.
+A bonus feature is a floating keyboard with programming-related keys (including indent/shift-indent and left/right arrows), that avoids the need to keep switching pages on the mobile keyboard.
 
 It does not require installation (works in the browser), but it can be installed as a PWA using the mobile browser's `Add to Home Screen` option.
 
