@@ -15,6 +15,7 @@ import './components/code-editor.js?v=14'
 import './components/code-preview.js?v=1'
 import './components/file-open-dialog.js?v=1'
 import './components/file-save-dialog.js?v=1'
+import './components/about-dialog.js?v=1'
 
 const DEFAULT_CODE = `<style>\n  \n</style>\n<body>\n  \n</body>\n<script>\n  \n<\/script>`
 
@@ -142,6 +143,7 @@ class App extends LitElement {
                         <sl-menu-item value="save">Save <sl-icon slot="prefix" name="floppy-fill"></sl-icon></sl-menu-item>
                         <sl-menu-item value="save_as">Save As <sl-icon slot="prefix" name="floppy-fill"></sl-icon></sl-menu-item>
                         <sl-menu-item value="download">Download <sl-icon slot="prefix" name="download"></sl-icon></sl-menu-item>
+                        <sl-menu-item value="about">About <sl-icon slot="prefix" name="info-circle"></sl-icon></sl-menu-item>
                     </sl-menu>
                 </sl-dropdown>
             </div>
@@ -161,8 +163,10 @@ class App extends LitElement {
 
         this.openDialog = document.createElement("open-dialog")
         this.saveDialog = document.createElement("save-dialog")
+        this.aboutDialog = document.createElement("about-dialog")
         this.shadowRoot.appendChild(this.openDialog)
         this.shadowRoot.appendChild(this.saveDialog)
+        this.shadowRoot.appendChild(this.aboutDialog)
 
         // bind event listeners
         const menu = this.shadowRoot.querySelector("#menu")
@@ -233,6 +237,10 @@ class App extends LitElement {
         a.href = URL.createObjectURL(blob);
         a.download = fname;
         a.click();
+    }
+
+    action_about() {
+        this.aboutDialog.show()
     }
 
     openFile(filename) {
