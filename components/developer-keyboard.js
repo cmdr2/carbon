@@ -104,31 +104,30 @@ class DeveloperKeyboard extends LitElement {
     }
 
     _onCharKey(char) {
-        if (char === SHIFT) {
-            this._shiftPressed = !this._shiftPressed
-            keyRows[0][0] = (this._shiftPressed ? UNINDENT : INDENT)
-            return
-        }
-
         let key
 
         switch (char) {
+            case SHIFT:
+                this._shiftPressed = !this._shiftPressed
+                keyRows[0][0] = (this._shiftPressed ? UNINDENT : INDENT)
+                key = 'Shift'
+                break
             case INDENT:
             case UNINDENT:
                 key = 'Tab'
-                break;
+                break
             case ARROW_UP:
                 key = 'ArrowUp'
-                break;
+                break
             case ARROW_DOWN:
                 key = 'ArrowDown'
-                break;
+                break
             case ARROW_LEFT:
                 key = 'ArrowLeft'
-                break;
+                break
             case ARROW_RIGHT:
                 key = 'ArrowRight'
-                break;
+                break
             default:
                 key = char
         }

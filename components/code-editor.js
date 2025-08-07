@@ -196,6 +196,8 @@ class CodeEditor extends LitElement {
             case 'ArrowRight':
                 cursorCharRight(view)
                 break
+            case 'Shift':
+                break
             default: { // Character key
                 let char = key
                 if (pairs[key]) {
