@@ -8,7 +8,7 @@ import {html as htmlLang} from "@codemirror/lang-html"
 import {css as cssLang} from "@codemirror/lang-css"
 import {monokai} from "@uiw/codemirror-theme-monokai"
 
-import './developer-keyboard.js'
+import './developer-keyboard.js?v=2'
 
 const pairs = {
     '(': ')',
