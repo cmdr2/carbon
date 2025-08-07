@@ -3,8 +3,10 @@ import {LitElement, html, css} from 'lit'
 import 'shoelace/components/tab-group/tab-group.js'
 import 'shoelace/components/tab/tab.js'
 import 'shoelace/components/tab-panel/tab-panel.js'
+import 'shoelace/components/divider/divider.js'
 import 'shoelace/components/dropdown/dropdown.js'
 import 'shoelace/components/button/button.js'
+import 'shoelace/components/button-group/button-group.js'
 import 'shoelace/components/menu/menu.js'
 import 'shoelace/components/menu-item/menu-item.js'
 import 'shoelace/components/icon/icon.js'
@@ -65,6 +67,20 @@ class App extends LitElement {
             z-index: 1;
             display: flex;
         }
+        #toolbar::part(base) {
+            padding: 4pt 0;
+            line-height: 5pt;
+        }
+        #toolbar::part(checked-icon),
+        #toolbar::part(submenu-icon) {
+            width: 2pt;
+        }
+        #toolbar sl-button {
+            line-height: 5pt;
+        }
+        #toolbar sl-button::part(base) {
+            min-height: 5pt;
+        }
         #menu sl-button::part(base) {
             background: transparent;
             border: 0;
@@ -103,13 +119,24 @@ class App extends LitElement {
             </sl-tab-group>
 
             <div id="actions">
-                <sl-button id="runBtn">
+                <sl-button id="runBtn" @click=${this.action_run}>
                     <sl-icon name="play-fill" slot="prefix"></sl-icon>
                     Run
                 </sl-button>
                 <sl-dropdown id="menu">
                     <sl-button slot="trigger"><sl-icon name="three-dots-vertical"></sl-icon></sl-button>
                     <sl-menu>
+                        <sl-menu-item id="toolbar">
+                            <sl-button-group label="Timeline">
+                                <sl-button @click=${this.action_undo}><sl-icon name="arrow-counterclockwise" slot="prefix"></sl-icon></sl-button>
+                                <sl-button @click=${this.action_redo}><sl-icon name="arrow-clockwise" slot="prefix"></sl-icon></sl-button>
+                            </sl-button-group>
+                            <sl-button-group>
+                                <sl-button @click=${this.action_clear}><sl-icon name="trash" slot="prefix"></sl-icon></sl-button>
+                                <sl-button @click=${this.action_paste}><sl-icon name="clipboard-check-fill" slot="prefix"></sl-icon></sl-button>
+                            </sl-button-group>
+                        </sl-menu-item>
+                        <sl-divider></sl-divider>
                         <sl-menu-item value="new">New <sl-icon slot="prefix" name="file-earmark-plus"></sl-icon></sl-menu-item>
                         <sl-menu-item value="open">Open <sl-icon slot="prefix" name="file-earmark-fill"></sl-icon></sl-menu-item>
                         <sl-menu-item value="save">Save <sl-icon slot="prefix" name="floppy-fill"></sl-icon></sl-menu-item>
@@ -138,9 +165,6 @@ class App extends LitElement {
         this.shadowRoot.appendChild(this.saveDialog)
 
         // bind event listeners
-        const runBtn = this.shadowRoot.querySelector("#runBtn")
-        runBtn.addEventListener("click", this.action_run.bind(this))
-
         const menu = this.shadowRoot.querySelector("#menu")
         menu.addEventListener("sl-select", e => this["action_" + e.detail.item.value]())
 
@@ -158,6 +182,26 @@ class App extends LitElement {
         this.previewTab.style.display = "block"
         this.tabGroup.show('preview')
         this.preview.src = this.editor.src
+    }
+
+    action_undo(e) {
+        e.stopPropagation()
+        this.editor.undo()
+    }
+
+    action_redo(e) {
+        e.stopPropagation()
+        this.editor.redo()
+    }
+
+    action_clear(e) {
+        e.stopPropagation()
+        this.editor.clear()
+    }
+
+    action_paste(e) {
+        e.stopPropagation()
+        this.editor.paste()
     }
 
     action_new() {
