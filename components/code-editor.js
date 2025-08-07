@@ -2,7 +2,7 @@ import {LitElement, html, css} from "lit"
 
 import {EditorView, basicSetup} from "codemirror"
 import {history, undo as cmUndo, redo as cmRedo} from "@codemirror/commands"
-import {indentMore, cursorCharLeft, cursorCharRight, cursorLineUp, cursorLineDown} from "@codemirror/commands"
+import {indentMore, indentLess, cursorCharLeft, cursorCharRight, cursorLineUp, cursorLineDown} from "@codemirror/commands"
 import {javascript as javascriptLang} from "@codemirror/lang-javascript"
 import {html as htmlLang} from "@codemirror/lang-html"
 import {css as cssLang} from "@codemirror/lang-css"
@@ -168,14 +168,18 @@ class CodeEditor extends LitElement {
         // We don't want this to bubble up and be handled by other listeners.
         e.stopPropagation()
 
-        const { key } = e
+        const { key, shiftKey } = e
         const view = this.editor
         const cursorPos = view.state.selection.main.head
         let viewCmd = null
 
         switch (key) {
             case 'Tab': {
-                indentMore(view)
+                if (shiftKey) {
+                    indentLess(view)
+                } else {
+                    indentMore(view)
+                }
                 break
             }
             case 'ArrowUp': {

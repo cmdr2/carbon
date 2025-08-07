@@ -1,22 +1,33 @@
 import {LitElement, html, css} from "lit"
 
+const SHIFT = "shift"
 const INDENT = "indent"
+const UNINDENT = "unindent"
 const ARROW_UP = "arrow-up"
 const ARROW_DOWN = "arrow-down"
 const ARROW_LEFT = "arrow-left"
 const ARROW_RIGHT = "arrow-right"
 
 const keyRows = [
-    [INDENT, ':', '(', '{', '[', '<', '>', '&',        ARROW_UP,   '|'],
-    ['=',    ';', '"', '+', '-', '/', '*', ARROW_LEFT, ARROW_DOWN, ARROW_RIGHT]
+    [INDENT, ':', '(', '{', '[', '<', '>', '&',   '|'],
+    [SHIFT, '=',    ';', '"', '+', '-', '/', '*', ARROW_LEFT, ARROW_RIGHT]
 ]
-const actionKeys = [INDENT, ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT]
+const actionKeys = [SHIFT, INDENT, UNINDENT, ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT]
 
 function isActionKey(c) {
     return actionKeys.includes(c)
 }
 
 class DeveloperKeyboard extends LitElement {
+    static properties = {
+        _shiftPressed: {type: Boolean, state: true}
+    }
+
+    constructor() {
+        super()
+        this._shiftPressed = false
+    }
+
     static styles = css`
         :host {
             display: block;
@@ -56,6 +67,9 @@ class DeveloperKeyboard extends LitElement {
             background: #222;
             border: 1px solid #444;
         }
+        .pressed {
+            background: #1f5cc7;
+        }
     `
 
     render() {
@@ -70,8 +84,13 @@ class DeveloperKeyboard extends LitElement {
 
     renderButton(char) {
         if (isActionKey(char)) {
+            let extraClasses = ""
+            if (char === SHIFT && this._shiftPressed) {
+                extraClasses = "pressed"
+            }
+
             return html`
-                <button class="action-key" @click=${() => this._onCharKey(char)}>
+                <button class="action-key ${extraClasses}" @click=${() => this._onCharKey(char)}>
                     <sl-icon name="${char}"></sl-icon>
                 </button>
             `
@@ -85,28 +104,37 @@ class DeveloperKeyboard extends LitElement {
     }
 
     _onCharKey(char) {
-        let key;
+        if (char === SHIFT) {
+            this._shiftPressed = !this._shiftPressed
+            keyRows[0][0] = (this._shiftPressed ? UNINDENT : INDENT)
+            return
+        }
+
+        let key
+
         switch (char) {
             case INDENT:
-                key = 'Tab';
+            case UNINDENT:
+                key = 'Tab'
                 break;
             case ARROW_UP:
-                key = 'ArrowUp';
+                key = 'ArrowUp'
                 break;
             case ARROW_DOWN:
-                key = 'ArrowDown';
+                key = 'ArrowDown'
                 break;
             case ARROW_LEFT:
-                key = 'ArrowLeft';
+                key = 'ArrowLeft'
                 break;
             case ARROW_RIGHT:
-                key = 'ArrowRight';
+                key = 'ArrowRight'
                 break;
             default:
-                key = char;
+                key = char
         }
         this.dispatchEvent(new KeyboardEvent('keyup', {
             key: key,
+            shiftKey: this._shiftPressed,
             bubbles: true,
             composed: true
         }))
