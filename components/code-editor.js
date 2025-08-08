@@ -6,7 +6,7 @@ import {indentMore, indentLess, cursorCharLeft, cursorCharRight, cursorLineUp, c
 import {javascript as javascriptLang} from "@codemirror/lang-javascript"
 import {html as htmlLang} from "@codemirror/lang-html"
 import {css as cssLang} from "@codemirror/lang-css"
-import {monokai} from "@uiw/codemirror-theme-monokai"
+import {okaidia} from "@uiw/codemirror-theme-okaidia"
 
 import './developer-keyboard.js?v=3'
 
@@ -16,7 +16,7 @@ const pairs = {
     '[': ']',
     '"': '"',
     '\'': '\''
-};
+}
 
 class CodeEditor extends LitElement {
     static styles = css`
@@ -30,6 +30,9 @@ class CodeEditor extends LitElement {
             width: 100%;
             height: 100%;
             overflow: auto;
+        }
+        #editor .cm-foldGutter {
+            display: none !important;
         }
         #editor .cm-editor {
             width: 100%;
@@ -72,7 +75,7 @@ class CodeEditor extends LitElement {
                 basicSetup,
                 history(),
                 htmlLang(), cssLang(), javascriptLang(),
-                monokai],
+                okaidia],
             parent: this.shadowRoot.getElementById("editor"),
         })
 
