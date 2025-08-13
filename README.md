@@ -1,6 +1,6 @@
 A simple browser-based code editor, focused on programming on mobile devices. It runs and saves locally on your device.
 
-Live at [https://me.cmdr2.org/carbon](https://me.cmdr2.org/carbon)
+Live at [https://me.cmdr2.org/carbon/editor](https://me.cmdr2.org/carbon/editor)
 
 ## Background
 I often write or run code while traveling on a bus, so this is a simple editor tailored to my needs. It currently supports only single-file HTML/CSS/JS, intended for quick prototyping.
