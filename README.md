@@ -12,6 +12,7 @@ Installation is not required—it works in the browser—but it can be installed
 ## Screenshots
 <img height="250" alt="home" src="https://github.com/user-attachments/assets/7a85f448-014f-4164-9e6f-7a5370a3878c" />
 <img height="250" alt="preview" src="https://github.com/user-attachments/assets/d8786e30-b038-4336-a8d4-dadc9fb007af" />
+<img height="250" alt="preview_console_collapsed" src="https://github.com/user-attachments/assets/41251d05-5359-44c8-9c93-fe40579bf0ca" />
 <img height="250" alt="menu" src="https://github.com/user-attachments/assets/476b6aeb-058e-4869-a98e-0f14fe3237c1" />
 
 
