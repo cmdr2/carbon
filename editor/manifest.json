@@ -1,9 +1,9 @@
 {
   "name": "Carbon",
   "short_name": "Carbon Editor",
-  "description": "Carbon app",
-  "start_url": "/carbon",
-  "scope": "/carbon/",
+  "description": "Carbon mobile code editor",
+  "start_url": "/carbon/editor",
+  "scope": "/carbon/editor",
   "display": "standalone",
   "icons": [
     {
