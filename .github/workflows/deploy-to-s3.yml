@@ -17,7 +17,7 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: ${{ vars.PROD_DEPLOY_ROLE }}
+        role-to-assume: ${{ vars.S3_DEPLOY_ROLE }}
         aws-region: us-east-1
     - name: Copy files to S3
       run: |
