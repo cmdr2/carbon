@@ -4,6 +4,7 @@ import {EditorView, basicSetup} from "codemirror"
 import {history, undo as cmUndo, redo as cmRedo} from "@codemirror/commands"
 import {indentMore, indentLess, cursorCharLeft, cursorCharRight, cursorLineUp, cursorLineDown} from "@codemirror/commands"
 import {javascript as javascriptLang} from "@codemirror/lang-javascript"
+import {keymap} from "@codemirror/view"
 import {html as htmlLang} from "@codemirror/lang-html"
 import {css as cssLang} from "@codemirror/lang-css"
 import {okaidia} from "@uiw/codemirror-theme-okaidia"
@@ -17,6 +18,16 @@ const pairs = {
     '"': '"',
     '\'': '\''
 }
+
+const indentWithTab = [{
+        key: 'Tab',
+        run: indentMore,
+    },
+    {
+        key: 'Shift-Tab',
+        run: indentLess,
+    }
+]
 
 class CodeEditor extends LitElement {
     static styles = css`
@@ -75,6 +86,7 @@ class CodeEditor extends LitElement {
                 basicSetup,
                 history(),
                 htmlLang(), cssLang(), javascriptLang(),
+                keymap.of(indentWithTab),
                 okaidia],
             parent: this.shadowRoot.getElementById("editor"),
         })
