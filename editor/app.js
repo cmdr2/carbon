@@ -11,7 +11,7 @@ import 'shoelace/components/menu/menu.js'
 import 'shoelace/components/menu-item/menu-item.js'
 import 'shoelace/components/icon/icon.js'
 
-import './components/code-editor.js?v=15'
+import './components/code-editor.js?v=16'
 import './components/code-preview.js?v=1'
 import './components/file-open-dialog.js?v=1'
 import './components/file-save-dialog.js?v=1'
