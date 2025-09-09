@@ -7,11 +7,35 @@ on:
     branches:
     - main
 jobs:
-  deploy_to_aws_s3:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Copy files excluding .git and .github
+      run: |-
+        mkdir build
+        rsync -av --exclude '.git' --exclude '.github' --exclude 'LICENSE' --exclude 'README.md' --exclude='*.sh' ./ build/
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: build
+        path: build
+  deploy_to_aws_s3:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    steps:
+    - name: Download Artifact
+      uses: actions/download-artifact@v5
+      with:
+        name: build
+        path: .
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -19,8 +43,4 @@ jobs:
         aws-region: us-east-1
     - name: Sync Files to S3
       run: |-
-        aws s3 sync '.' 's3://me.cmdr2.org/carbon' --exclude '.git/*' --exclude '.github/*' --exclude 'LICENSE' --exclude 'README.md' --exclude '*.sh' --acl public-read
-    permissions:
-      contents: read
-      id-token: write
-    if: github.ref == 'refs/heads/main'
+        aws s3 sync '.' 's3://me.cmdr2.org/carbon' --acl public-read
