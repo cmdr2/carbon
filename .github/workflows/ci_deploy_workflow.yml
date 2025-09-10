@@ -14,7 +14,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Copy files excluding .git and .github
+    - name: Copy files into the build
       run: |-
         mkdir build
         rsync -av --exclude '.git' --exclude '.github' --exclude 'LICENSE' --exclude 'README.md' --exclude='*.sh' ./ build/
@@ -23,7 +23,7 @@ jobs:
       with:
         name: build
         path: build
-  deploy_to_aws_s3:
+  deploy_to_aws_s3_on_main_branch:
     runs-on: ubuntu-latest
     permissions:
       contents: read
