@@ -23,7 +23,7 @@ jobs:
       with:
         name: build
         path: build
-  deploy_to_aws_s3_on_main_branch:
+  deploy_to_aws_s3_on_main_push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -41,6 +41,6 @@ jobs:
       with:
         role-to-assume: ${{ vars.S3_DEPLOY_ROLE }}
         aws-region: us-east-1
-    - name: Sync Files to S3
+    - name: Upload File to S3
       run: |-
-        aws s3 sync '.' 's3://me.cmdr2.org/carbon' --acl public-read
+        aws s3 cp '.' 's3://me.cmdr2.org/carbon' --acl public-read --recursive
