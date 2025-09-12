@@ -38,8 +38,7 @@ jobs:
         path: .
     - name: Install s3-sync-changes
       run: |-
-        curl -o /usr/local/bin/s3-sync-changes.py https://github.com/cmdr2/s3-sync-changes/releases/latest/download/s3-sync-changes.py
-        chmod +x /usr/local/bin/s3-sync-changes.py
+        curl -L -o /tmp/s3-sync-changes.py https://github.com/cmdr2/s3-sync-changes/releases/latest/download/s3-sync-changes.py
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -51,4 +50,4 @@ jobs:
         python-version: 3.x
     - name: Sync Changed Files to S3
       run: |-
-        python /usr/local/bin/s3-sync-changes.py '.' 's3://me.cmdr2.org/carbon' --acl public-read --dryrun
+        python /tmp/s3-sync-changes.py '.' 's3://me.cmdr2.org/carbon' --acl public-read --dryrun
